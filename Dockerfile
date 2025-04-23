@@ -29,4 +29,4 @@ EXPOSE 8080
 CMD ["java", "-jar", "app.jar", "--server.port=8080"]
 
 # 10️⃣ Definimos variables de entorno para la conexión a PostgreSQL
-ENV SPRING_DATASOURCE_URL=jdbc:postgresql://dpg-cv6fop8gph6c73dmosq0-a:5432/dbtecnify
+ENV SPRING_DATASOURCE_URL=postgresql://transporte_rlvu_user:HTH0WvknAhCdVG0WPdM9qp8QRYWx0y9k@dpg-d045tfadbo4c73e9mh80-a.oregon-postgres.render.com/transporte_rlvu
