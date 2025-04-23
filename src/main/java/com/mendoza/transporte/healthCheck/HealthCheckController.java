@@ -13,6 +13,8 @@ public class HealthCheckController {
     @Operation(summary = "HealthCheck", description = "Hace que el backend no se apague, manda una peticion cada 5 min")
     @GetMapping("/health")
     public ResponseEntity<String> healthCheck() {
+
+        System.out.println("OK");
         return ResponseEntity.ok("OK");
     }
 }
