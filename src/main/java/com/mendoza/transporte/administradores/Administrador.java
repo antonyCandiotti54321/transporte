@@ -21,7 +21,8 @@ import java.util.List;
 @Table(name="administradores", uniqueConstraints = { @UniqueConstraint(columnNames = {"username"})})
 public class Administrador implements UserDetails {
 @Id
-@GeneratedValue(strategy = GenerationType.IDENTITY) // Evita problemas con la generación de ID
+@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "administrador_seq")
+@SequenceGenerator(name = "administrador_seq", sequenceName = "administrador_seq", allocationSize = 1)
 Long id;
 @Column(nullable = false, unique = true)
 String username;

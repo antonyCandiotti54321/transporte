@@ -23,7 +23,8 @@ import java.util.List;
 @Table(name="choferes", uniqueConstraints = { @UniqueConstraint(columnNames = {"username"})})
 public class Chofer implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Evita problemas con la generación de ID
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "chofer_seq")
+    @SequenceGenerator(name = "chofer_seq", sequenceName = "chofer_seq", allocationSize = 1)
     Long id;
     @Column(nullable = false, unique = true)
     String username;

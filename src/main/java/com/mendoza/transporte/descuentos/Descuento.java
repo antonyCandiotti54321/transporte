@@ -18,7 +18,8 @@ import java.time.LocalDateTime;
 @Table(name="descuentos")
 public class Descuento {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Evita problemas con la generación de ID
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "descuento_seq")
+    @SequenceGenerator(name = "descuento_seq", sequenceName = "descuento_seq", allocationSize = 1)
     Long id;
     @Column(nullable = false)
     Long idChofer;
