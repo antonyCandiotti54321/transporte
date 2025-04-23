@@ -29,6 +29,7 @@ public class SecurityConfig {
                         authRequest
                                 .requestMatchers("api/auth/**").permitAll()
                                 .requestMatchers("api/health/**").permitAll()
+                                .requestMatchers("ping/**").permitAll()
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN") // Solo técnicos
                                 .requestMatchers("/api/chofer/**").hasRole("CHOFER") // Solo clientes
                                 .anyRequest().authenticated()
