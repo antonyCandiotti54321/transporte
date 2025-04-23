@@ -1,79 +1,98 @@
 package com.mendoza.transporte.descuentos;
 
-
-import com.mendoza.transporte.auth.AuthResponse;
 import com.mendoza.transporte.auth.AuthService;
-import com.mendoza.transporte.auth.LoginRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageRequest;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/chofer/descuentos")
-@RequiredArgsConstructor  //obligatorio todos los contrusctores con argumentos
+@RequiredArgsConstructor
 public class DescuentoController {
 
     private final AuthService authService;
-    private final DescuentoService descuentoService ;
-
-    //responseentity hace la respuesta http codigo de estado, encabezado y cuerpo de respuesta
-    @PostMapping(value="crea")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request){
-        return ResponseEntity.ok(authService.login(request));
-    }
+    private final DescuentoService descuentoService;
 
     @PostMapping
-    public ResponseEntity<Descuento> createDescuento(@RequestBody DescuentoResponse request){
-        return ResponseEntity.ok(descuentoService.createDescuento(request));
+    public ResponseEntity<Descuento> createDescuento(@RequestBody DescuentoRequest request) {
+        Descuento creado = descuentoService.createDescuento(request);
+        System.out.println("createDescuento response: " + creado);
+        return ResponseEntity.ok(creado);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getDescuento(@PathVariable Long id){
-        Descuento descuento = descuentoService.getDescuento(id);
-        if (descuento == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Descuento no encontrado con ID: " + id);
+    public ResponseEntity<Object> getDescuento(@PathVariable Long id) {
+        DescuentoResponse response = descuentoService.getDescuento(id);
+
+        if (response == null) {
+            String mensaje = "Descuento no encontrado con ID: " + id;
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
         }
-        return ResponseEntity.ok(descuento);
+
+        System.out.println("getDescuento response (ID=" + id + "): " + response);
+        return ResponseEntity.ok(response);
     }
 
-    // Actualizar descuento
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateDescuento(@PathVariable Long id, @RequestBody DescuentoResponse request) {
-        Descuento descuento = descuentoService.updateDescuento(id, request);
-        if (descuento == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Descuento no encontrado con ID: " + id);
+    public ResponseEntity<Object> updateDescuento(@PathVariable Long id,
+                                                  @RequestBody DescuentoRequest request) {
+        Descuento actualizado = descuentoService.updateDescuento(id, request);
+        ResponseEntity<Object> response;
+        if (actualizado == null) {
+            String mensaje = "Descuento no encontrado con ID: " + id;
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
+        } else {
+            response = ResponseEntity.ok(actualizado);
         }
-        return ResponseEntity.ok(descuento);
+        System.out.println("updateDescuento response (ID=" + id + "): " + response.getBody());
+        return response;
     }
 
-    // Eliminar descuento
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteDescuento(@PathVariable Long id) {
         boolean deleted = descuentoService.deleteDescuento(id);
+        ResponseEntity<Object> response;
         if (!deleted) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Descuento no encontrado con ID: " + id);
+            String mensaje = "Descuento no encontrado con ID: " + id;
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensaje);
+        } else {
+            response = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        System.out.println("deleteDescuento response (ID=" + id + "): status=" + response.getStatusCode());
+        return response;
     }
 
-    @GetMapping("/paginado")
-    public ResponseEntity<Page<Descuento>> getDescuentosPaginados(
+
+
+
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> getDescuentosPaginados(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Descuento> descuentos = descuentoService.getDescuentosPaginados(pageable);
-        return ResponseEntity.ok(descuentos);
-    }
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<DescuentoResponse> descuentosPage = descuentoService.getDescuentosPaginados(pageable);
 
+        Map<String, Object> response = new HashMap<>();
+        response.put("descuentos", descuentosPage.getContent());
+        response.put("currentPage", descuentosPage.getNumber() + 1);
+        response.put("totalItems", descuentosPage.getTotalElements());
+        response.put("totalPages", descuentosPage.getTotalPages());
+
+        System.out.println("getDescuentosPaginados response: " +
+                "page=" + (descuentosPage.getNumber() + 1) +
+                ", size=" + descuentosPage.getSize() +
+                ", totalItems=" + descuentosPage.getTotalElements() +
+                ", totalPages=" + descuentosPage.getTotalPages());
+
+        return ResponseEntity.ok(response);
+    }
 
 }

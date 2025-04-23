@@ -1,22 +1,26 @@
 package com.mendoza.transporte.descuentos;
 
 
+import com.mendoza.transporte.choferes.Chofer;
+import com.mendoza.transporte.choferes.ChoferRepository;
+import com.mendoza.transporte.empleados.Empleado;
+import com.mendoza.transporte.empleados.EmpleadoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class DescuentoService {
 
     private final DescuentoRepository descuentoRepository;
+    private final ChoferRepository choferRepository;
+    private final EmpleadoRepository empleadoRepository;
 
-    public Descuento createDescuento(DescuentoResponse request){
+    public Descuento createDescuento(DescuentoRequest request){
     Descuento descuento = Descuento.builder()
-            .idUsuario(request.getIdUsuario())
+            .idChofer(request.getIdChofer())
             .idEmpleado(request.getIdEmpleado())
             .soles(request.getSoles())
             .mensaje(request.getMensaje())
@@ -26,17 +30,34 @@ public class DescuentoService {
 
         }
 
-    public Descuento getDescuento(Long id){
-        return descuentoRepository.findById(id).orElse(null);
+    public DescuentoResponse getDescuento(Long id) {
+        Descuento descuento = descuentoRepository.findById(id).orElse(null);
+        if (descuento == null) return null;
+
+        Chofer chofer = choferRepository.findById(descuento.getIdChofer())
+                .orElseThrow(() -> new RuntimeException("Chofer no encontrado"));
+
+        Empleado empleado = empleadoRepository.findById(descuento.getIdEmpleado())
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
+
+        return DescuentoResponse.builder()
+                .id(descuento.getId())
+                .nombreChofer(chofer.getNombreCompleto())
+                .nombreEmpleado(empleado.getNombreCompleto())
+                .soles(descuento.getSoles())
+                .mensaje(descuento.getMensaje())
+                .imagenUrl(descuento.getImagenUrl())
+                .fechaHora(descuento.getFechaHora())
+                .build();
     }
 
     // Actualizar descuento
-    public Descuento updateDescuento(Long id, DescuentoResponse request) {
+    public Descuento updateDescuento(Long id, DescuentoRequest request) {
         // Buscar el descuento por ID
         Descuento descuento = descuentoRepository.findById(id).orElse(null);
         if (descuento != null) {
             // Actualizar los campos
-            descuento.setIdUsuario(request.getIdUsuario());
+            descuento.setIdChofer(request.getIdChofer());
             descuento.setIdEmpleado(request.getIdEmpleado());
             descuento.setSoles(request.getSoles());
             descuento.setMensaje(request.getMensaje());
@@ -57,8 +78,26 @@ public class DescuentoService {
     }
 
 
-    public Page<Descuento> getDescuentosPaginados(Pageable pageable) {
-        return descuentoRepository.findAll(pageable);
+    public Page<DescuentoResponse> getDescuentosPaginados(Pageable pageable) {
+        Page<Descuento> descuentosPage = descuentoRepository.findAll(pageable);
+
+        return descuentosPage.map(descuento -> {
+            Chofer chofer = choferRepository.findById(descuento.getIdChofer())
+                    .orElseThrow(() -> new RuntimeException("Chofer no encontrado"));
+
+            Empleado empleado = empleadoRepository.findById(descuento.getIdEmpleado())
+                    .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
+
+            return DescuentoResponse.builder()
+                    .id(descuento.getId())
+                    .nombreChofer(chofer.getNombreCompleto())
+                    .nombreEmpleado(empleado.getNombreCompleto())
+                    .soles(descuento.getSoles())
+                    .mensaje(descuento.getMensaje())
+                    .imagenUrl(descuento.getImagenUrl())
+                    .fechaHora(descuento.getFechaHora())
+                    .build();
+        });
     }
 
 

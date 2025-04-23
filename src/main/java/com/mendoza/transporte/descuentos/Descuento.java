@@ -15,12 +15,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name="descuentos")
 public class Descuento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Evita problemas con la generación de ID
     Long id;
     @Column(nullable = false)
-    Long idUsuario;
+    Long idChofer;
     @Column(nullable = false)
     Long idEmpleado;
     @Column(nullable = false, precision = 10, scale = 2)

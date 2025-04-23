@@ -17,12 +17,16 @@ public class AuthController {
     //responseentity hace la respuesta http codigo de estado, encabezado y cuerpo de respuesta
     @PostMapping(value="auth/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request){
-        return ResponseEntity.ok(authService.login(request));
+        AuthResponse response = authService.login(request);
+        System.out.println("Login realizado: usuario=" + request.getUsername());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping(value="admin/register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request){
-        return ResponseEntity.ok(authService.register(request));
+        AuthResponse response = authService.register(request);
+        System.out.println("Registro realizado: usuario=" + request.getUsername() + ", rol=" + request.getRole());
+        return ResponseEntity.ok(response);
     }
 
 }

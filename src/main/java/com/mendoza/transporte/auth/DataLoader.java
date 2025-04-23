@@ -2,11 +2,13 @@ package com.mendoza.transporte.auth;
 
 import com.mendoza.transporte.administradores.AdministradorRepository;
 import com.mendoza.transporte.choferes.ChoferRepository;
+import com.mendoza.transporte.administradores.Role;
+import com.mendoza.transporte.empleados.Empleado;
+import com.mendoza.transporte.empleados.EmpleadoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-import com.mendoza.transporte.administradores.Role;
 
 @RequiredArgsConstructor
 @Component
@@ -15,6 +17,7 @@ public class DataLoader {
     private final AdministradorRepository administradorRepository;
     private final AuthService authService;
     private final ChoferRepository choferRepository;
+    private final EmpleadoRepository empleadoRepository;
 
     @Bean
     CommandLineRunner init() {
@@ -28,11 +31,10 @@ public class DataLoader {
                         .build();
                 authService.register(request);
                 System.out.println("Usuario administrador creado con exito.");
-            }else {
+            } else {
                 System.out.println("Administrador ya existe.");
             }
 
-            // Crear chofer si no existe
             if (choferRepository.findByUsername("chofer").isEmpty()) {
                 RegisterRequest request = RegisterRequest.builder()
                         .username("chofer")
@@ -44,6 +46,18 @@ public class DataLoader {
                 System.out.println("Chofer creado con exito.");
             } else {
                 System.out.println("Chofer ya existe.");
+            }
+
+            // Crear empleado por defecto si no existe
+            String nombreEmpleado = "Empleado prueba";
+            if (empleadoRepository.findByNombreCompleto(nombreEmpleado).isEmpty()) {
+                Empleado empleado = Empleado.builder()
+                        .nombreCompleto(nombreEmpleado)
+                        .build();
+                empleadoRepository.save(empleado);
+                System.out.println("Empleado creado con exito.");
+            } else {
+                System.out.println("Empleado ya existe.");
             }
         };
     }

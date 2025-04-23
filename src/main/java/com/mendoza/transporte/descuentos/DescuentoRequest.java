@@ -6,19 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DescuentoResponse {
-    Long id;
-    String nombreChofer;
-    String nombreEmpleado;
-    BigDecimal soles;
-    String mensaje;
-    String imagenUrl;
-    LocalDateTime fechaHora;
+public class DescuentoRequest {
+    private Long idChofer;
+    private Long idEmpleado;
+    private BigDecimal soles;
+    private String mensaje;
+    private String imagenUrl;
 }
