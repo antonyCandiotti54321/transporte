@@ -51,23 +51,22 @@ public class SecurityConfig {
         return http.build();
     }
 
-    /**
-     * Bean que define la política de CORS:
-     * - acepta cualquier origen ("*")
-     * - acepta todos los métodos HTTP
-     * - acepta todas las cabeceras
-     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("*"));              // permite todas las URLs
-        config.setAllowedMethods(List.of("*"));              // GET, POST, PUT, DELETE, etc.
-        config.setAllowedHeaders(List.of("*"));              // Authorization, Content-Type, etc.
-        config.setAllowCredentials(true);                    // si quieres enviar cookies o auth
+        // Solo permite peticiones desde tu frontend en desarrollo
+        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        // Permite todos los métodos HTTP (GET, POST, PUT, DELETE, etc.)
+        config.setAllowedMethods(List.of("*"));
+        // Permite todas las cabeceras que el cliente envíe
+        config.setAllowedHeaders(List.of("*"));
+        // Si necesitas enviar cookies o Authorization headers (por ejemplo JWT), déjalo en true
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        // aplica esta configuración a todas las rutas
+        // Aplica esta configuración a todas las rutas de la API
         source.registerCorsConfiguration("/**", config);
         return source;
     }
+
 }
