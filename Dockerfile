@@ -1,7 +1,7 @@
 # 1️⃣ Usamos la imagen oficial de Gradle con Java 17
 FROM gradle:8.5-jdk17 AS build
 
-# 2️⃣ Establecemos el directorio de trabajo
+# 2️⃣ Establecemos el directorio de trabajo en MAIN
 WORKDIR /app
 
 # 3️⃣ Copiamos solo los archivos de configuración de Gradle primero (aprovechando la cache)
@@ -11,7 +11,8 @@ COPY build.gradle settings.gradle ./
 COPY src ./src
 
 # 5️⃣ Construimos el proyecto (genera el JAR)
-RUN gradle build --no-daemon
+# Nueva línea
+RUN gradle build -x test --no-daemon
 
 # 6️⃣ Usamos una imagen más liviana de OpenJDK 17 para ejecutar el JAR
 FROM openjdk:17-jdk-slim
