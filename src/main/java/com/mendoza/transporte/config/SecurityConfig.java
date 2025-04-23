@@ -17,6 +17,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -29,7 +31,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 // 1) habilita CORS usando la configuración que definiremos más abajo
-                .cors(AbstractHttpConfigurer::disable)  // si usas Spring Security 6 puedes hacer .cors(withDefaults())
+                .cors(withDefaults()) // si usas Spring Security 6 puedes hacer .cors(withDefaults())
                 // 2) desactiva CSRF (no necesario para APIs REST sin sesión)
                 .csrf(AbstractHttpConfigurer::disable)
                 // 3) reglas de acceso
