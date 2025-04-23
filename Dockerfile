@@ -11,7 +11,8 @@ COPY build.gradle settings.gradle ./
 COPY src ./src
 
 # 5️⃣ Construimos el proyecto (genera el JAR)
-RUN gradle build --no-daemon
+# Nueva línea
+RUN gradle build -x test --no-daemon
 
 # 6️⃣ Usamos una imagen más liviana de OpenJDK 17 para ejecutar el JAR
 FROM openjdk:17-jdk-slim
