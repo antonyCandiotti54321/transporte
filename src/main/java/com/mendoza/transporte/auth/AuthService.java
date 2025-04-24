@@ -15,7 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
-
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -27,35 +26,45 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public AuthResponse login(LoginRequest request) {
+        // 1. Autenticación
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+                    new UsernamePasswordAuthenticationToken(
+                            request.getUsername(),
+                            request.getPassword()
+                    )
             );
         } catch (Exception e) {
             throw new RuntimeException("Credenciales incorrectas");
         }
 
-        // Buscamos el usuario, ya sea administrador o chofer
-        UserDetails user = administradorRepository
-                .findByUsername(request.getUsername())
-                .orElseGet(() -> choferRepository
-                        .findByUsername(request.getUsername())
-                        .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"))
-                );
-
-        String token = jwtService.getToken(user);
-
-        // Extraemos los datos comunes de nombre completo y role
-        String nombreCompleto = null;
-        Role role = null;
-        if (user instanceof Administrador) {
-            nombreCompleto = ((Administrador) user).getNombreCompleto();
-            role = ((Administrador) user).getRole();
-        } else if (user instanceof Chofer) {
-            nombreCompleto = ((Chofer) user).getNombreCompleto();
-            role = ((Chofer) user).getRole();
+        // 2. Cargar usuario (administrador o chofer)
+        UserDetails user;
+        var optAdmin = administradorRepository.findByUsername(request.getUsername());
+        if (optAdmin.isPresent()) {
+            user = optAdmin.get();
+        } else {
+            user = choferRepository
+                    .findByUsername(request.getUsername())
+                    .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
         }
 
+        // 3. Generar token
+        String token = jwtService.getToken(user);
+
+        // 4. Extraer nombreCompleto y role
+        String nombreCompleto;
+        Role role;
+        if (user instanceof Administrador admin) {
+            nombreCompleto = admin.getNombreCompleto();
+            role = admin.getRole();
+        } else {
+            Chofer chofer = (Chofer) user;
+            nombreCompleto = chofer.getNombreCompleto();
+            role = chofer.getRole();
+        }
+
+        // 5. Devolver respuesta
         return AuthResponse.builder()
                 .token(token)
                 .nombreCompleto(nombreCompleto)
@@ -65,33 +74,33 @@ public class AuthService {
 
     public AuthResponse register(RegisterRequest request) {
         if (request.getRole() == Role.ADMIN) {
-            Administrador user = Administrador.builder()
+            Administrador admin = Administrador.builder()
                     .username(request.getUsername())
                     .password(passwordEncoder.encode(request.getPassword()))
                     .nombreCompleto(request.getNombreCompleto())
                     .role(request.getRole())
                     .build();
-            administradorRepository.save(user);
+            administradorRepository.save(admin);
 
             return AuthResponse.builder()
-                    .token(jwtService.getToken(user))
-                    .nombreCompleto(user.getNombreCompleto())
-                    .role(user.getRole())
+                    .token(jwtService.getToken(admin))
+                    .nombreCompleto(admin.getNombreCompleto())
+                    .role(admin.getRole())
                     .build();
         }
 
-        Chofer user = Chofer.builder()
+        Chofer chofer = Chofer.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .nombreCompleto(request.getNombreCompleto())
                 .role(request.getRole())
                 .build();
-        choferRepository.save(user);
+        choferRepository.save(chofer);
 
         return AuthResponse.builder()
-                .token(jwtService.getToken(user))
-                .nombreCompleto(user.getNombreCompleto())
-                .role(user.getRole())
+                .token(jwtService.getToken(chofer))
+                .nombreCompleto(chofer.getNombreCompleto())
+                .role(chofer.getRole())
                 .build();
     }
 }
