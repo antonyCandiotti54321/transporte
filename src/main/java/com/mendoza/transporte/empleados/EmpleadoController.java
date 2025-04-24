@@ -26,7 +26,7 @@ public class EmpleadoController {
         return ResponseEntity.ok(creado);
     }
 
-    @GetMapping("admin/empleados")
+    @GetMapping("empleado")
     public ResponseEntity<List<Empleado>> getAllEmpleados() {
         List<Empleado> empleados = empleadoService.getAllEmpleados();
 
