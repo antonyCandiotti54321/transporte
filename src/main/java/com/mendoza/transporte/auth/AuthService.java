@@ -40,37 +40,40 @@ public class AuthService {
 
         // 2. Cargar usuario (administrador o chofer)
         UserDetails user;
+        String nombreCompleto;
+        Role role;
+        Long id;
+
         var optAdmin = administradorRepository.findByUsername(request.getUsername());
         if (optAdmin.isPresent()) {
-            user = optAdmin.get();
+            Administrador admin = optAdmin.get();
+            user = admin;
+            nombreCompleto = admin.getNombreCompleto();
+            role = admin.getRole();
+            id = admin.getId();
         } else {
-            user = choferRepository
+            Chofer chofer = choferRepository
                     .findByUsername(request.getUsername())
                     .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+
+            user = chofer;
+            nombreCompleto = chofer.getNombreCompleto();
+            role = chofer.getRole();
+            id = chofer.getId();
         }
 
         // 3. Generar token
         String token = jwtService.getToken(user);
 
-        // 4. Extraer nombreCompleto y role
-        String nombreCompleto;
-        Role role;
-        if (user instanceof Administrador admin) {
-            nombreCompleto = admin.getNombreCompleto();
-            role = admin.getRole();
-        } else {
-            Chofer chofer = (Chofer) user;
-            nombreCompleto = chofer.getNombreCompleto();
-            role = chofer.getRole();
-        }
-
-        // 5. Devolver respuesta
+        // 4. Devolver respuesta con ID incluido
         return AuthResponse.builder()
                 .token(token)
                 .nombreCompleto(nombreCompleto)
                 .role(role)
+                .id(id)
                 .build();
     }
+
 
     public AuthResponse register(RegisterRequest request) {
         if (request.getRole() == Role.ADMIN) {
