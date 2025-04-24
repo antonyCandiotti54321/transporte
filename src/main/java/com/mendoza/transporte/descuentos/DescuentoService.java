@@ -10,7 +10,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+
 import java.util.stream.Collectors;
 
 @Service
@@ -103,6 +107,31 @@ public class DescuentoService {
         }).collect(Collectors.toList());
     }
 
+    public List<DescuentoTotalResponse> getDescuentoTotalPorEmpleado() {
+        List<Descuento> descuentos = descuentoRepository.findAll();
+
+        Map<Long, BigDecimal> sumaPorEmpleado = new HashMap<>();
+
+        for (Descuento d : descuentos) {
+            sumaPorEmpleado.merge(
+                    d.getIdEmpleado(),
+                    d.getSoles(),
+                    BigDecimal::add
+            );
+        }
+
+        return sumaPorEmpleado.entrySet().stream().map(entry -> {
+            Long idEmpleado = entry.getKey();
+            BigDecimal totalSoles = entry.getValue();
+
+            String nombreEmpleado = empleadoRepository.findById(idEmpleado)
+                    .map(Empleado::getNombreCompleto)
+                    .orElse("Desconocido");
+
+            return new DescuentoTotalResponse(idEmpleado, nombreEmpleado, totalSoles);
+        }).collect(Collectors.toList());
+
+    }
 
 
 

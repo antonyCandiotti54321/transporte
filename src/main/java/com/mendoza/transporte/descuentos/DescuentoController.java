@@ -73,10 +73,16 @@ public class DescuentoController {
 
 
 
-    @GetMapping("/todos")
+    @GetMapping
     public ResponseEntity<List<DescuentoResponse>> getTodosLosDescuentos() {
         List<DescuentoResponse> descuentos = descuentoService.getTodosLosDescuentos();
         return ResponseEntity.ok(descuentos);
+    }
+
+    @GetMapping("/descuento-total")
+    public ResponseEntity<List<DescuentoTotalResponse>> getDescuentoTotalPorEmpleado() {
+        List<DescuentoTotalResponse> resultado = descuentoService.getDescuentoTotalPorEmpleado();
+        return ResponseEntity.ok(resultado);
     }
 
 
