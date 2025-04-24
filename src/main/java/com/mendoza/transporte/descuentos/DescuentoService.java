@@ -10,6 +10,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class DescuentoService {
@@ -78,10 +81,10 @@ public class DescuentoService {
     }
 
 
-    public Page<DescuentoResponse> getDescuentosPaginados(Pageable pageable) {
-        Page<Descuento> descuentosPage = descuentoRepository.findAll(pageable);
+    public List<DescuentoResponse> getTodosLosDescuentos() {
+        List<Descuento> descuentos = descuentoRepository.findAll();
 
-        return descuentosPage.map(descuento -> {
+        return descuentos.stream().map(descuento -> {
             Chofer chofer = choferRepository.findById(descuento.getIdChofer())
                     .orElseThrow(() -> new RuntimeException("Chofer no encontrado"));
 
@@ -97,8 +100,9 @@ public class DescuentoService {
                     .imagenUrl(descuento.getImagenUrl())
                     .fechaHora(descuento.getFechaHora())
                     .build();
-        });
+        }).collect(Collectors.toList());
     }
+
 
 
 

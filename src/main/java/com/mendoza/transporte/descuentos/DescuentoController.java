@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/chofer/descuentos")
@@ -72,27 +73,11 @@ public class DescuentoController {
 
 
 
-    @GetMapping
-    public ResponseEntity<Map<String, Object>> getDescuentosPaginados(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
-        Pageable pageable = PageRequest.of(page - 1, size);
-        Page<DescuentoResponse> descuentosPage = descuentoService.getDescuentosPaginados(pageable);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("descuentos", descuentosPage.getContent());
-        response.put("currentPage", descuentosPage.getNumber() + 1);
-        response.put("totalItems", descuentosPage.getTotalElements());
-        response.put("totalPages", descuentosPage.getTotalPages());
-
-        System.out.println("getDescuentosPaginados response: " +
-                "page=" + (descuentosPage.getNumber() + 1) +
-                ", size=" + descuentosPage.getSize() +
-                ", totalItems=" + descuentosPage.getTotalElements() +
-                ", totalPages=" + descuentosPage.getTotalPages());
-
-        return ResponseEntity.ok(response);
+    @GetMapping("/todos")
+    public ResponseEntity<List<DescuentoResponse>> getTodosLosDescuentos() {
+        List<DescuentoResponse> descuentos = descuentoService.getTodosLosDescuentos();
+        return ResponseEntity.ok(descuentos);
     }
+
 
 }
