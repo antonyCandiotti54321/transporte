@@ -14,21 +14,21 @@ import java.util.Map;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/chofer/descuentos")
+@RequestMapping("api")
 @RequiredArgsConstructor
 public class DescuentoController {
 
     private final AuthService authService;
     private final DescuentoService descuentoService;
 
-    @PostMapping
+    @PostMapping("chofer/descuentos")
     public ResponseEntity<Descuento> createDescuento(@RequestBody DescuentoRequest request) {
         Descuento creado = descuentoService.createDescuento(request);
         System.out.println("createDescuento response: " + creado);
         return ResponseEntity.ok(creado);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("chofer/descuentos/{id}")
     public ResponseEntity<Object> getDescuento(@PathVariable Long id) {
         DescuentoResponse response = descuentoService.getDescuento(id);
 
@@ -41,7 +41,7 @@ public class DescuentoController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("chofer/descuentos/{id}")
     public ResponseEntity<Object> updateDescuento(@PathVariable Long id,
                                                   @RequestBody DescuentoRequest request) {
         Descuento actualizado = descuentoService.updateDescuento(id, request);
@@ -56,7 +56,7 @@ public class DescuentoController {
         return response;
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("chofer/descuentos/{id}")
     public ResponseEntity<Object> deleteDescuento(@PathVariable Long id) {
         boolean deleted = descuentoService.deleteDescuento(id);
         ResponseEntity<Object> response;
@@ -73,13 +73,13 @@ public class DescuentoController {
 
 
 
-    @GetMapping
+    @GetMapping("chofer/descuentos")
     public ResponseEntity<List<DescuentoResponse>> getTodosLosDescuentos() {
         List<DescuentoResponse> descuentos = descuentoService.getTodosLosDescuentos();
         return ResponseEntity.ok(descuentos);
     }
 
-    @GetMapping("/descuento-total")
+    @GetMapping("admin/descuentos/descuento-total")
     public ResponseEntity<List<DescuentoTotalResponse>> getDescuentoTotalPorEmpleado() {
         List<DescuentoTotalResponse> resultado = descuentoService.getDescuentoTotalPorEmpleado();
         return ResponseEntity.ok(resultado);
