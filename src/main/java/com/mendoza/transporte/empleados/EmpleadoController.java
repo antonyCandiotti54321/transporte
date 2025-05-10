@@ -5,11 +5,8 @@ import com.mendoza.transporte.auth.AuthService;
 import com.mendoza.transporte.auth.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -36,5 +33,24 @@ public class EmpleadoController {
 
         return ResponseEntity.ok(empleados);
     }
+
+    @DeleteMapping("admin/empleado/{id}")
+    public void eliminar(@PathVariable Long id) {
+        empleadoService.eliminar(id);
+        System.out.println("Empleado eliminado");
+    }
+
+    @PutMapping("admin/empleado/{id}")
+    public ResponseEntity<Empleado> updateEmpleado(@PathVariable Long id, @RequestBody EmpleadoRequest request) {
+        Empleado actualizado = empleadoService.updateEmpleado(id, request);
+        return ResponseEntity.ok(actualizado);
+    }
+
+    @GetMapping("empleado/{id}")
+    public ResponseEntity<Empleado> getEmpleadoById(@PathVariable Long id) {
+        Empleado empleado = empleadoService.getEmpleadoById(id);
+        return ResponseEntity.ok(empleado);
+    }
+
 
 }

@@ -29,4 +29,23 @@ public class EmpleadoService {
         return empleadoRepository.findAll();
     }
 
+    public void eliminar(Long id) {
+        empleadoRepository.deleteById(id);
+    }
+
+    public Empleado updateEmpleado(Long id, EmpleadoRequest request) {
+        Empleado empleado = empleadoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
+
+        empleado.setNombreCompleto(request.getNombreCompleto());
+        return empleadoRepository.save(empleado);
+    }
+
+    public Empleado getEmpleadoById(Long id) {
+        return empleadoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
+    }
+
+
+
 }
