@@ -8,12 +8,12 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 
-@Route("index/main")
-public class MainView extends HorizontalLayout implements BeforeEnterObserver {
+@Route("index/empleados")
+public class Empleados extends HorizontalLayout implements BeforeEnterObserver {
 
-    private final VerticalLayout content = new VerticalLayout(); // contenido principal
+    private final VerticalLayout content = new VerticalLayout();
 
-    public MainView() {
+    public Empleados(){
         setSizeFull();
 
         Sidebar sidebar = new Sidebar(); // crear sidebar aquí
@@ -43,4 +43,3 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver {
         }
     }
 }
-

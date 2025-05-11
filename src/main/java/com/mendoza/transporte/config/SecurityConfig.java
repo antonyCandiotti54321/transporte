@@ -48,6 +48,7 @@ public class SecurityConfig {
                                 "/favicon.ico"
                         ).permitAll()
                         // tus APIs
+                        .requestMatchers("/index/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/health/**").permitAll()
                         .requestMatchers("/ping/**").permitAll()
