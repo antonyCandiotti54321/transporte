@@ -30,21 +30,34 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // 1) habilita CORS usando la configuración que definiremos más abajo
-                .cors(withDefaults()) // si usas Spring Security 6 puedes hacer .cors(withDefaults())
-                // 2) desactiva CSRF (no necesario para APIs REST sin sesión)
+                // 1) CORS
+                .cors(withDefaults())
+                // 2) CSRF off
                 .csrf(AbstractHttpConfigurer::disable)
-                // 3) reglas de acceso
+                // 3) permitir recursos estáticos de Vaadin
                 .authorizeHttpRequests(auth -> auth
+                        // rutas de Vaadin UI y estáticos
+                        .requestMatchers(
+                                "/",
+                                "/VAADIN/**",
+                                "/frontend/**",
+                                "/webjars/**",
+                                "/resources/**",
+                                "/static/**",
+                                "/icons/**",
+                                "/favicon.ico"
+                        ).permitAll()
+                        // tus APIs
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/health/**").permitAll()
                         .requestMatchers("/ping/**").permitAll()
                         .requestMatchers("/api/empleado/**").hasAnyRole("ADMIN", "CHOFER")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/chofer/**").hasRole("CHOFER")
+                        // resto debe autenticarse
                         .anyRequest().authenticated()
                 )
-                // 4) sin sesión (stateless JWT)
+                // 4) Stateless JWT
                 .sessionManagement(sess -> sess
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
@@ -57,19 +70,13 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        // Solo permite peticiones desde tu frontend en desarrollo
         config.setAllowedOrigins(List.of("http://localhost:5173"));
-        // Permite todos los métodos HTTP (GET, POST, PUT, DELETE, etc.)
         config.setAllowedMethods(List.of("*"));
-        // Permite todas las cabeceras que el cliente envíe
         config.setAllowedHeaders(List.of("*"));
-        // Si necesitas enviar cookies o Authorization headers (por ejemplo JWT), déjalo en true
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        // Aplica esta configuración a todas las rutas de la API
         source.registerCorsConfiguration("/**", config);
         return source;
     }
-
 }
