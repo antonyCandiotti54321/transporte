@@ -47,6 +47,8 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
                 // Guardar token y nombre en sesión de Vaadin
                 VaadinSession.getCurrent().setAttribute("token", resp.getToken());
                 VaadinSession.getCurrent().setAttribute("nombreCompleto", resp.getNombreCompleto());
+                VaadinSession.getCurrent().setAttribute("role", resp.getRole().toString());
+
 
 
                 loginOverlay.close();

@@ -22,6 +22,8 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver {
 
         String nombre = (String) VaadinSession.getCurrent().getAttribute("nombreCompleto");
 
+
+
         String saludo = "Hola";
         if (nombre != null && !nombre.isEmpty()) {
             saludo += ", tu nombre es " + nombre;
