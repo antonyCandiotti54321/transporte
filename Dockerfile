@@ -11,9 +11,10 @@ COPY build.gradle settings.gradle ./
 COPY src ./src
 
 # 5️⃣ Construimos el proyecto (genera el JAR)
-# Nueva línea
+# sin vaadin
+#RUN gradle build -x test --no-daemon
+#con vaadin
 RUN gradle vaadinBuild build -x test --no-daemon
-
 
 # 6️⃣ Usamos una imagen más liviana de OpenJDK 17 para ejecutar el JAR
 FROM openjdk:17-jdk-slim
