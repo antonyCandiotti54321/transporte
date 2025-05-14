@@ -1,5 +1,7 @@
 package com.mendoza.transporte.descuentos;
 
+import com.mendoza.transporte.choferes.Chofer;
+import com.mendoza.transporte.empleados.Empleado;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,10 +23,12 @@ public class Descuento {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "descuento_seq")
     @SequenceGenerator(name = "descuento_seq", sequenceName = "descuento_seq", allocationSize = 1)
     Long id;
-    @Column(nullable = false)
-    Long idChofer;
-    @Column(nullable = false)
-    Long idEmpleado;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_chofer", nullable = false)
+    Chofer chofer;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_empleado", nullable = false)
+    Empleado empleado;
     @Column(nullable = false, precision = 10, scale = 2)
     BigDecimal soles;
     String mensaje;

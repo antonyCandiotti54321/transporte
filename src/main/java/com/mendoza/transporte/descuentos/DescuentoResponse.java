@@ -1,5 +1,7 @@
 package com.mendoza.transporte.descuentos;
 
+import com.mendoza.transporte.choferes.ChoferDTO;
+import com.mendoza.transporte.empleados.EmpleadoDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,11 +16,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DescuentoResponse {
-    Long id;
-    String nombreChofer;
-    String nombreEmpleado;
-    BigDecimal soles;
-    String mensaje;
-    String imagenUrl;
-    LocalDateTime fechaHora;
+    private Long id;
+    private ChoferDTO chofer;
+    private EmpleadoDTO empleado;
+    private BigDecimal soles;
+    private String mensaje;
+    private String imagenUrl;
+    private LocalDateTime fechaHora;
 }
