@@ -16,7 +16,7 @@ public class EmpleadoController {
 
     private final EmpleadoService empleadoService;
 
-    @PostMapping("admin/register/empleado")
+    @PostMapping("admin/empleado")
     public ResponseEntity<Empleado> createEmpleado(@RequestBody EmpleadoRequest request) {
         Empleado creado = empleadoService.createEmpleado(request);
         System.out.println("Empleado creado: " + creado);
