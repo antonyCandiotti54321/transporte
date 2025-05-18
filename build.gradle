@@ -50,6 +50,9 @@ dependencies {
 
 	implementation 'com.vaadin:vaadin-spring-boot-starter:24.4.3'
 
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+
 
 }
 //implementation 'com.google.firebase:firebase-admin:9.2.0' // versión reciente

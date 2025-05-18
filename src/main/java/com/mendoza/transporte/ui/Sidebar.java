@@ -50,8 +50,10 @@ public class Sidebar extends VerticalLayout {
             RouterLink choferes = new RouterLink("Choferes", Choferes.class);
             RouterLink empleados = new RouterLink("Empleados", Empleados.class);
             RouterLink descTotal = new RouterLink("Descuentos totales", DescuentoTotal.class);
-            styleLink(admin, choferes, empleados, descTotal);
-            content.add(admin, choferes, empleados, descTotal);
+            RouterLink mapaView = new RouterLink("Mapa Camiones", MapaView.class);
+
+            styleLink(admin, choferes, empleados, descTotal,mapaView);
+            content.add(admin, choferes, empleados, descTotal, mapaView);
         }
 
         // Botón de logout
