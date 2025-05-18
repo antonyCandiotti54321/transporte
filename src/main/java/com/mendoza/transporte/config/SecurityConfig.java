@@ -55,7 +55,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/empleado/**").hasAnyRole("ADMIN", "CHOFER")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/chofer/**").hasAnyRole("ADMIN", "CHOFER")
-                        .requestMatchers("/ws/**").hasRole("CHOFER")
+                        .requestMatchers("/ws/**").permitAll()
                         // resto debe autenticarse
                         .anyRequest().authenticated()
                 )
