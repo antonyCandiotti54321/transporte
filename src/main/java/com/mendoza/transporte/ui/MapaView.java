@@ -29,28 +29,40 @@ public class MapaView extends VerticalLayout {
 
         // Ejecutar JavaScript para inicializar el mapa
         ui.getPage().executeJs("""
-            window.addEventListener('load', function () {
-                const map = L.map('map').setView([-12.0464, -77.0428], 13); // Lima, Perú
+    window.addEventListener('load', function () {
+        const map = L.map('map').setView([-12.0464, -77.0428], 13);
 
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap contributors'
-                }).addTo(map);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
 
-                // Marcador de camión
-                L.marker([-12.0464, -77.0428])
-                    .addTo(map)
-                    .bindPopup('Camión A')
-                    .openPopup();
+        let marker = null;
 
-                // Ruta entre dos puntos
-                L.Routing.control({
-                    waypoints: [
-                        L.latLng(-12.0464, -77.0428),
-                        L.latLng(-12.0560, -77.0500)
-                    ],
-                    createMarker: function () { return null; }
-                }).addTo(map);
+        // WebSocket y STOMP
+        const socket = new SockJS('https://transporte-ecug.onrender.com/ws');
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function (frame) {
+            console.log('📥 Conectado al WebSocket:', frame);
+
+            stompClient.subscribe('/topic/ubicacion', function (mensaje) {
+                const data = JSON.parse(mensaje.body);
+                console.log('📍 Ubicación recibida:', data);
+
+                const lat = data.latitud;
+                const lng = data.longitud;
+
+                if (marker) {
+                    marker.setLatLng([lat, lng]);
+                } else {
+                    marker = L.marker([lat, lng]).addTo(map).bindPopup('Camión ' + data.id).openPopup();
+                }
+
+                map.setView([lat, lng], 13);
             });
-        """);
+        });
+    });
+""");
+
     }
 }
