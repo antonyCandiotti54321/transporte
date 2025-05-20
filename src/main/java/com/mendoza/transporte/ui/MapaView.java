@@ -10,31 +10,35 @@ public class MapaView extends VerticalLayout {
 
     public MapaView() {
         setSizeFull();
-        setAlignItems(Alignment.CENTER);  // Centra horizontalmente
-        setJustifyContentMode(JustifyContentMode.CENTER);  // Centra verticalmente
+        setAlignItems(Alignment.CENTER);  // Centrar horizontalmente
+        setJustifyContentMode(JustifyContentMode.CENTER);  // Centrar verticalmente
 
+        // Contenedor del mapa
         Div mapaDiv = new Div();
         mapaDiv.setId("map");
-        mapaDiv.setWidth("500px");     // Ancho reducido
-        mapaDiv.setHeight("400px");    // Alto reducido
-        mapaDiv.getStyle().set("box-shadow", "0 4px 12px rgba(0,0,0,0.1)"); // Opcional: sombra
+        mapaDiv.setWidth("500px");
+        mapaDiv.setHeight("400px");
+        mapaDiv.getStyle().set("box-shadow", "0 4px 12px rgba(0,0,0,0.1)");
         add(mapaDiv);
 
-        // Carga los scripts de Leaflet
-        UI.getCurrent().getPage().addStyleSheet("https://unpkg.com/leaflet/dist/leaflet.css");
-        UI.getCurrent().getPage().addJavaScript("https://unpkg.com/leaflet/dist/leaflet.js");
-        UI.getCurrent().getPage().addJavaScript("https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.min.js");
+        // Cargar los estilos y scripts necesarios de Leaflet y Leaflet Routing Machine
+        UI ui = UI.getCurrent();
+        ui.getPage().addStyleSheet("https://unpkg.com/leaflet/dist/leaflet.css");
+        ui.getPage().addJavaScript("https://unpkg.com/leaflet/dist/leaflet.js");
+        ui.getPage().addJavaScript("https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.min.js");
 
-        UI.getCurrent().getPage().executeJs("""
-            setTimeout(() => {
-                var map = L.map('map').setView([-12.0464, -77.0428], 13); // Lima, Perú
+        // Ejecutar JavaScript para inicializar el mapa
+        ui.getPage().executeJs("""
+            window.addEventListener('load', function () {
+                const map = L.map('map').setView([-12.0464, -77.0428], 13); // Lima, Perú
 
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '© OpenStreetMap contributors'
                 }).addTo(map);
 
                 // Marcador de camión
-                var marker = L.marker([-12.0464, -77.0428]).addTo(map)
+                L.marker([-12.0464, -77.0428])
+                    .addTo(map)
                     .bindPopup('Camión A')
                     .openPopup();
 
@@ -44,9 +48,9 @@ public class MapaView extends VerticalLayout {
                         L.latLng(-12.0464, -77.0428),
                         L.latLng(-12.0560, -77.0500)
                     ],
-                    createMarker: () => null
+                    createMarker: function () { return null; }
                 }).addTo(map);
-            }, 1000);
+            });
         """);
     }
 }
