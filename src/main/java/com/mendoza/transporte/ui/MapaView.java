@@ -4,6 +4,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 
 @Route("mapa")
 public class MapaView extends VerticalLayout {
@@ -15,62 +16,63 @@ public class MapaView extends VerticalLayout {
 
         Div mapaDiv = new Div();
         mapaDiv.setId("map");
-        mapaDiv.setWidth("600px");
-        mapaDiv.setHeight("450px");
+        mapaDiv.setWidth("500px");
+        mapaDiv.setHeight("400px");
         mapaDiv.getStyle().set("box-shadow", "0 4px 12px rgba(0,0,0,0.1)");
         add(mapaDiv);
 
         UI ui = UI.getCurrent();
-
-        // Carga CSS y JS necesarios (Leaflet, SockJS, STOMP)
         ui.getPage().addStyleSheet("https://unpkg.com/leaflet/dist/leaflet.css");
         ui.getPage().addJavaScript("https://unpkg.com/leaflet/dist/leaflet.js");
+        ui.getPage().addJavaScript("https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.min.js");
         ui.getPage().addJavaScript("https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js");
         ui.getPage().addJavaScript("https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js");
 
-        // Ejecuta JS para inicializar mapa y conectar WebSocket
+        // Obtener token de sesión Vaadin
+        String token = (String) VaadinSession.getCurrent().getAttribute("token");
+
+        // Pasar el token al JS y usarlo para conectar STOMP con autenticación
         ui.getPage().executeJs("""
-            // Crear el mapa centrado en Lima
-            const map = L.map('map').setView([-12.0464, -77.0428], 13);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
+        const token = $0;
 
-            // Mapa para guardar marcadores por ID (camión)
-            const markers = new Map();
+        const map = L.map('map').setView([-12.0464, -77.0428], 13);
 
-            // Configurar conexión WebSocket con SockJS + STOMP
-            const socket = new SockJS('https://transporte-ecug.onrender.com/ws');
-            const stompClient = Stomp.over(socket);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
 
-            stompClient.connect({}, function(frame) {
-                console.log('Conectado a WebSocket:', frame);
+        let marker = null;
 
-                stompClient.subscribe('/topic/ubicacion', function(mensaje) {
-                    const data = JSON.parse(mensaje.body);
-                    console.log('Ubicación recibida:', data);
+        const socket = new SockJS('https://transporte-ecug.onrender.com/ws');
+        const stompClient = Stomp.over(socket);
 
-                    const id = data.id;
-                    const lat = data.latitud;
-                    const lng = data.longitud;
+        // Conectar enviando el token como header Authorization Bearer
+        stompClient.connect(
+          { Authorization: 'Bearer ' + token },
+          function(frame) {
+            console.log('📥 Conectado al WebSocket:', frame);
 
-                    if(markers.has(id)) {
-                        // Actualizar posición del marcador existente
-                        markers.get(id).setLatLng([lat, lng]);
-                    } else {
-                        // Crear nuevo marcador y guardarlo
-                        const marker = L.marker([lat, lng])
-                            .addTo(map)
-                            .bindPopup('Camión ' + id);
-                        markers.set(id, marker);
-                    }
+            stompClient.subscribe('/topic/ubicacion', function(mensaje) {
+                const data = JSON.parse(mensaje.body);
+                console.log('📍 Ubicación recibida:', data);
 
-                    // Opcional: centrar mapa en la última ubicación recibida
-                    map.setView([lat, lng], 13);
-                });
-            }, function(error) {
-                console.error('Error al conectar WebSocket:', error);
+                const lat = data.latitud;
+                const lng = data.longitud;
+
+                if (marker) {
+                    marker.setLatLng([lat, lng]);
+                } else {
+                    marker = L.marker([lat, lng]).addTo(map).bindPopup('Camión ' + data.id).openPopup();
+                }
+
+                map.setView([lat, lng], 13);
             });
-        """);
+          },
+          function(error) {
+            console.error('Error al conectar WebSocket:', error);
+          }
+        );
+    """, token);
     }
+
 }
