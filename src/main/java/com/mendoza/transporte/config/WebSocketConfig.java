@@ -15,12 +15,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final JwtHandshakeInterceptor jwtHandshakeInterceptor;
-    private final AuthChannelInterceptor authChannelInterceptor;
 
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(authChannelInterceptor);
-    }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
