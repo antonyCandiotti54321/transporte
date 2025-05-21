@@ -16,8 +16,8 @@ public class MapaView extends VerticalLayout {
 
         Div mapaDiv = new Div();
         mapaDiv.setId("map");
-        mapaDiv.setWidth("500px");
-        mapaDiv.setHeight("400px");
+        mapaDiv.setWidth("600px");      // aumentado 20%
+        mapaDiv.setHeight("480px");     // aumentado 20%
         mapaDiv.getStyle().set("box-shadow", "0 4px 12px rgba(0,0,0,0.1)");
         add(mapaDiv);
 
@@ -28,51 +28,50 @@ public class MapaView extends VerticalLayout {
         ui.getPage().addJavaScript("https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js");
         ui.getPage().addJavaScript("https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js");
 
-        // Obtener token de sesión Vaadin
         String token = (String) VaadinSession.getCurrent().getAttribute("token");
+        System.out.println("🔐 Token JWT en la sesión actual: " + token);
 
-        // Pasar el token al JS y usarlo para conectar STOMP con autenticación
         ui.getPage().executeJs("""
-        const token = $0;
+    const token = $0;
 
-        const map = L.map('map').setView([-12.0464, -77.0428], 13);
+    const map = L.map('map').setView([-12.0464, -77.0428], 19);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
 
-        let marker = null;
+    let marker = null;
 
-        const socket = new SockJS('https://transporte-ecug.onrender.com/ws');
-        const stompClient = Stomp.over(socket);
+    const socket = new SockJS('https://transporte-ecug.onrender.com/ws?token=' + encodeURIComponent(token));
+    const stompClient = Stomp.over(socket);
 
-        // Conectar enviando el token como header Authorization Bearer
-        stompClient.connect(
-          { Authorization: 'Bearer ' + token },
-          function(frame) {
-            console.log('📥 Conectado al WebSocket:', frame);
+    stompClient.connect(
+      {},
+      function(frame) {
+        console.log('📥 Conectado al WebSocket:', frame);
 
-            stompClient.subscribe('/topic/ubicacion', function(mensaje) {
-                const data = JSON.parse(mensaje.body);
-                console.log('📍 Ubicación recibida:', data);
+        stompClient.subscribe('/topic/ubicacion', function(mensaje) {
+            const data = JSON.parse(mensaje.body);
+            console.log('📍 Ubicación recibida:', data);
 
-                const lat = data.latitud;
-                const lng = data.longitud;
+            const lat = data.latitud;
+            const lng = data.longitud;
 
-                if (marker) {
-                    marker.setLatLng([lat, lng]);
-                } else {
-                    marker = L.marker([lat, lng]).addTo(map).bindPopup('Camión ' + data.id).openPopup();
-                }
+            if (marker) {
+                marker.setLatLng([lat, lng]);
+            } else {
+                marker = L.marker([lat, lng]).addTo(map).bindPopup('Camión ' + data.id).openPopup();
+            }
 
-                map.setView([lat, lng], 13);
-            });
-          },
-          function(error) {
-            console.error('Error al conectar WebSocket:', error);
-          }
-        );
-    """, token);
+            // No mover la cámara con map.setView para respetar la interacción del usuario
+        });
+      },
+      function(error) {
+        console.error('Error al conectar WebSocket:', error);
+      }
+    );
+""", token);
+
+
     }
-
 }
