@@ -48,6 +48,34 @@ public class DataLoader {
                 System.out.println("Chofer ya existe.");
             }
 
+            // Nuevo chofer: Kelly
+            if (choferRepository.findByUsername("kelly").isEmpty()) {
+                RegisterRequest request = RegisterRequest.builder()
+                        .username("kelly")
+                        .password("kelly")
+                        .nombreCompleto("Kelly Uwarai")
+                        .role(Role.CHOFER)
+                        .build();
+                authService.register(request);
+                System.out.println("Chofer 'Kelly' creado con exito.");
+            } else {
+                System.out.println("Chofer 'Kelly' ya existe.");
+            }
+
+            // Nuevo chofer: Profesor
+            if (choferRepository.findByUsername("profesor").isEmpty()) {
+                RegisterRequest request = RegisterRequest.builder()
+                        .username("profesor")
+                        .password("profesor")
+                        .nombreCompleto("Profesor Senati")
+                        .role(Role.CHOFER)
+                        .build();
+                authService.register(request);
+                System.out.println("Chofer 'Profesor' creado con exito.");
+            } else {
+                System.out.println("Chofer 'Profesor' ya existe.");
+            }
+
             // Crear empleado por defecto si no existe
             String nombreEmpleado = "Empleado prueba";
             if (empleadoRepository.findByNombreCompleto(nombreEmpleado).isEmpty()) {
