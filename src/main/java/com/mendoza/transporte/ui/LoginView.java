@@ -1,6 +1,6 @@
 package com.mendoza.transporte.ui;
 
-import com.mendoza.transporte.auth.AuthService;
+import com.mendoza.transporte.ui.login.AuthService;
 import com.mendoza.transporte.auth.LoginRequest;
 import com.mendoza.transporte.auth.AuthResponse;
 import com.vaadin.flow.component.UI;
@@ -16,12 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Route("index")
 public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
-    private final AuthService authService;
     private final LoginOverlay loginOverlay = new LoginOverlay();
+    private final AuthService authService = new AuthService();
 
-    @Autowired
-    public LoginView(AuthService authService) {
-        this.authService = authService;
+    public LoginView() {
         setSizeFull();
 
         // Configurar textos en español
@@ -37,26 +35,20 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
         loginOverlay.setAction("/index");
         loginOverlay.setOpened(true);
 
-        // Evento al hacer login
         loginOverlay.addLoginListener(e -> {
             try {
                 LoginRequest request = new LoginRequest(e.getUsername(), e.getPassword());
-                AuthResponse resp = authService.login(request);
+                AuthResponse response = authService.login(request);
 
-                // Guardar token en sesión de Vaadin
-                // Guardar token y nombre en sesión de Vaadin
-                VaadinSession.getCurrent().setAttribute("token", resp.getToken());
-                VaadinSession.getCurrent().setAttribute("nombreCompleto", resp.getNombreCompleto());
-                VaadinSession.getCurrent().setAttribute("role", resp.getRole().toString());
-
-
+                VaadinSession.getCurrent().setAttribute("token", response.getToken());
+                VaadinSession.getCurrent().setAttribute("nombreCompleto", response.getNombreCompleto());
+                VaadinSession.getCurrent().setAttribute("role", response.getRole());
 
                 loginOverlay.close();
-
-                // Redirigir con recarga completa y actualización de URL
                 UI.getCurrent().getPage().setLocation("index/main");
 
             } catch (Exception ex) {
+                ex.printStackTrace();
                 loginOverlay.setError(true);
             }
         });
@@ -64,14 +56,11 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
         add(loginOverlay);
     }
 
-
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
         String token = (String) VaadinSession.getCurrent().getAttribute("token");
         if (token != null && !token.isEmpty()) {
-            event.rerouteTo("index/main"); // o LoginView.class, pero usando la ruta adecuada
+            event.rerouteTo("index/main");
         }
     }
-
 }
-
