@@ -10,7 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class AuthService {
-    private final String baseUrl = "https://transporte-ecug.onrender.com/auth/login";
+    private final String baseUrl = "https://transporte-ecug.onrender.com/api/auth/login";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public AuthResponse login(LoginRequest request) throws Exception {
