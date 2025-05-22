@@ -12,7 +12,7 @@ import java.util.List;
 
 
 public class ChoferService {
-    private final String baseUrl = "https://transporte-ecug.onrender.com/api/chofer";
+    private final String baseUrl = "https://transporte-ecug.onrender.com/api/choferes";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public List<ChoferResponse> obtenerTodos(String token) {

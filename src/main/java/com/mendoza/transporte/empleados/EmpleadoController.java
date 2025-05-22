@@ -16,14 +16,14 @@ public class EmpleadoController {
 
     private final EmpleadoService empleadoService;
 
-    @PostMapping("admin/empleado")
+    @PostMapping("admins/empleados")
     public ResponseEntity<Empleado> createEmpleado(@RequestBody EmpleadoRequest request) {
         Empleado creado = empleadoService.createEmpleado(request);
         System.out.println("Empleado creado: " + creado);
         return ResponseEntity.ok(creado);
     }
 
-    @GetMapping("empleado")
+    @GetMapping("empleados")
     public ResponseEntity<List<Empleado>> getAllEmpleados() {
         List<Empleado> empleados = empleadoService.getAllEmpleados();
 
@@ -34,19 +34,19 @@ public class EmpleadoController {
         return ResponseEntity.ok(empleados);
     }
 
-    @DeleteMapping("admin/empleado/{id}")
+    @DeleteMapping("admins/empleados/{id}")
     public void eliminar(@PathVariable Long id) {
         empleadoService.eliminar(id);
         System.out.println("Empleado eliminado");
     }
 
-    @PutMapping("admin/empleado/{id}")
+    @PutMapping("admins/empleados/{id}")
     public ResponseEntity<Empleado> updateEmpleado(@PathVariable Long id, @RequestBody EmpleadoRequest request) {
         Empleado actualizado = empleadoService.updateEmpleado(id, request);
         return ResponseEntity.ok(actualizado);
     }
 
-    @GetMapping("empleado/{id}")
+    @GetMapping("empleados/{id}")
     public ResponseEntity<Empleado> getEmpleadoById(@PathVariable Long id) {
         Empleado empleado = empleadoService.getEmpleadoById(id);
         return ResponseEntity.ok(empleado);

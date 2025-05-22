@@ -13,7 +13,7 @@ import java.util.List;
 
 
 public class EmpleadoService {
-    private final String baseUrl = "https://transporte-ecug.onrender.com/api/empleado";
+    private final String baseUrl = "https://transporte-ecug.onrender.com/api/empleados";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public List<EmpleadoResponse> obtenerTodos(String token) {

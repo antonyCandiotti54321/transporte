@@ -52,9 +52,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/health/**").permitAll()
                         .requestMatchers("/ping/**").permitAll()
-                        .requestMatchers("/api/empleado/**").hasAnyRole("ADMIN", "CHOFER")
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/chofer/**").hasAnyRole("ADMIN", "CHOFER")
+                        .requestMatchers("/api/empleados/**").hasAnyRole("ADMIN", "CHOFER")
+                        .requestMatchers("/api/admins/**").hasRole("ADMIN")
+                        .requestMatchers("/api/choferes/**").hasAnyRole("ADMIN", "CHOFER")
                         .requestMatchers("/ws/**").permitAll()
                         // resto debe autenticarse
                         .anyRequest().authenticated()

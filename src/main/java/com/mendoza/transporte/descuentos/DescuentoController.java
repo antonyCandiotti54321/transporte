@@ -15,7 +15,7 @@ public class DescuentoController {
 
     private final DescuentoService descuentoService;
 
-    @PostMapping("chofer/descuento")
+    @PostMapping("choferes/descuentos")
     public ResponseEntity<DescuentoResponse> createDescuento(@RequestBody DescuentoRequest request) {
         DescuentoResponse creado = descuentoService.createDescuento(request);
         System.out.println("createDescuento response: " + creado);
@@ -24,7 +24,7 @@ public class DescuentoController {
 
     //agergar parametros
     //todos los adelantos
-    @GetMapping("chofer/descuento")
+    @GetMapping("choferes/descuentos")
     public ResponseEntity<List<DescuentoResponse>> getTodosLosDescuentos() {
         List<DescuentoResponse> descuentos = descuentoService.getTodosLosDescuentos();
 
@@ -35,7 +35,7 @@ public class DescuentoController {
         return ResponseEntity.ok(descuentos);  // Retorna los descuentos con 200 OK
     }
 
-    @GetMapping("descuento/{id}")
+    @GetMapping("descuentos/{id}")
     public ResponseEntity<?> getDescuento(@PathVariable Long id) {
         try {
             DescuentoResponse response = descuentoService.getDescuento(id);
@@ -49,7 +49,7 @@ public class DescuentoController {
 
 
 
-    @PutMapping("chofer/descuento/{id}")
+    @PutMapping("choferes/descuentos/{id}")
     public ResponseEntity<Object> updateDescuento(@PathVariable Long id,
                                                   @RequestBody DescuentoRequest request) {
         try {
@@ -63,7 +63,7 @@ public class DescuentoController {
     }
 
 
-    @DeleteMapping("chofer/descuento/{id}")
+    @DeleteMapping("choferes/descuentos/{id}")
     public ResponseEntity<Object> deleteDescuento(@PathVariable Long id) {
         boolean deleted = descuentoService.deleteDescuento(id);
         ResponseEntity<Object> response;
@@ -84,7 +84,7 @@ public class DescuentoController {
 
 
 
-    @GetMapping("admin/descuento/descuentos-totales")
+    @GetMapping("admins/descuentos/descuentos-totales")
     public ResponseEntity<List<DescuentoTotalResponse>> getDescuentoTotalPorEmpleado() {
         List<DescuentoTotalResponse> resultado = descuentoService.getDescuentoTotalPorEmpleado();
         return ResponseEntity.ok(resultado);

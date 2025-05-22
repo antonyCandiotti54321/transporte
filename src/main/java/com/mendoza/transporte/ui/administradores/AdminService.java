@@ -12,7 +12,7 @@ import java.util.List;
 
 
 public class AdminService {
-    private final String baseUrl = "https://transporte-ecug.onrender.com/api/admin";
+    private final String baseUrl = "https://transporte-ecug.onrender.com/api/admins";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public List<AdministradorResponse> obtenerTodos(String token) {

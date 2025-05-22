@@ -22,7 +22,7 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping(value="admin/register")
+    @PostMapping(value="admins/register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request){
         AuthResponse response = authService.register(request);
         System.out.println("Registro realizado: usuario=" + request.getUsername() + ", rol=" + request.getRole());
