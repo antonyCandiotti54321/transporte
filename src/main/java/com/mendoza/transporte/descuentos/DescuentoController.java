@@ -1,6 +1,7 @@
 package com.mendoza.transporte.descuentos;
 
 import com.mendoza.transporte.auth.AuthService;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
+@Hidden
 @RestController
 @RequestMapping("api")
 @RequiredArgsConstructor

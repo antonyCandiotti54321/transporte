@@ -56,6 +56,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/admins/**").hasRole("ADMIN")
                         .requestMatchers("/api/choferes/**").hasAnyRole("ADMIN", "CHOFER")
                         .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/swagger-ui.html/**").permitAll()
+                        .requestMatchers("/v3/**").permitAll()
+
                         // resto debe autenticarse
                         .anyRequest().authenticated()
                 )
