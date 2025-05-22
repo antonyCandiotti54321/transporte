@@ -6,8 +6,7 @@ import jakarta.validation.ConstraintValidatorContext;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-public class EnumValidator implements ConstraintValidator<ValidEnum, String> {
+public class EnumValidator implements ConstraintValidator<ValidEnum, Enum<?>> {
     private Set<String> allowedValues;
     private String messageTemplate;
 
@@ -20,9 +19,9 @@ public class EnumValidator implements ConstraintValidator<ValidEnum, String> {
     }
 
     @Override
-    public boolean isValid(String value, ConstraintValidatorContext context) {
-        if (value == null) return true; // @NotNull lo maneja por separado
-        if (!allowedValues.contains(value)) {
+    public boolean isValid(Enum<?> value, ConstraintValidatorContext context) {
+        if (value == null) return true;
+        if (!allowedValues.contains(value.name())) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(messageTemplate)
                     .addConstraintViolation();
