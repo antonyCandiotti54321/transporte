@@ -1,6 +1,8 @@
 package com.mendoza.transporte.descuentos;
 
 import com.mendoza.transporte.auth.AuthService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
@@ -16,7 +18,7 @@ public class DescuentoController {
     private final DescuentoService descuentoService;
 
     @PostMapping("choferes/descuentos")
-    public ResponseEntity<DescuentoResponse> createDescuento(@RequestBody DescuentoRequest request) {
+    public ResponseEntity<DescuentoResponse> createDescuento(@Valid @RequestBody DescuentoRequest request) {
         DescuentoResponse creado = descuentoService.createDescuento(request);
         System.out.println("createDescuento response: " + creado);
         return ResponseEntity.ok(creado);
@@ -36,7 +38,7 @@ public class DescuentoController {
     }
 
     @GetMapping("descuentos/{id}")
-    public ResponseEntity<?> getDescuento(@PathVariable Long id) {
+    public ResponseEntity<?> getDescuento(@PathVariable @Positive(message = "El id debe ser positivo") Long id) {
         try {
             DescuentoResponse response = descuentoService.getDescuento(id);
             System.out.println("getDescuento response (ID=" + id + "): " + response);
@@ -50,8 +52,8 @@ public class DescuentoController {
 
 
     @PutMapping("choferes/descuentos/{id}")
-    public ResponseEntity<Object> updateDescuento(@PathVariable Long id,
-                                                  @RequestBody DescuentoRequest request) {
+    public ResponseEntity<Object> updateDescuento(@PathVariable @Positive(message = "El id debe ser positivo") Long id,
+                                                  @Valid @RequestBody DescuentoRequest request) {
         try {
             DescuentoResponse actualizado = descuentoService.updateDescuento(id, request);
             System.out.println("updateDescuento response (ID=" + id + "): " + actualizado);
@@ -64,7 +66,7 @@ public class DescuentoController {
 
 
     @DeleteMapping("choferes/descuentos/{id}")
-    public ResponseEntity<Object> deleteDescuento(@PathVariable Long id) {
+    public ResponseEntity<Object> deleteDescuento(@PathVariable @Positive(message = "El id debe ser positivo") Long id) {
         boolean deleted = descuentoService.deleteDescuento(id);
         ResponseEntity<Object> response;
         if (!deleted) {

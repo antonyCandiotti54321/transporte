@@ -1,5 +1,6 @@
 package com.mendoza.transporte.auth;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,14 +17,14 @@ public class AuthController {
 
     //responseentity hace la respuesta http codigo de estado, encabezado y cuerpo de respuesta
     @PostMapping(value="auth/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request){
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request){
         AuthResponse response = authService.login(request);
         System.out.println("Login realizado: usuario=" + request.getUsername());
         return ResponseEntity.ok(response);
     }
 
     @PostMapping(value="admins/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request){
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request){
         AuthResponse response = authService.register(request);
         System.out.println("Registro realizado: usuario=" + request.getUsername() + ", rol=" + request.getRole());
         return ResponseEntity.ok(response);

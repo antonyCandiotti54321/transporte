@@ -3,6 +3,8 @@ package com.mendoza.transporte.empleados;
 import com.mendoza.transporte.auth.AuthResponse;
 import com.mendoza.transporte.auth.AuthService;
 import com.mendoza.transporte.auth.RegisterRequest;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +19,7 @@ public class EmpleadoController {
     private final EmpleadoService empleadoService;
 
     @PostMapping("admins/empleados")
-    public ResponseEntity<Empleado> createEmpleado(@RequestBody EmpleadoRequest request) {
+    public ResponseEntity<Empleado> createEmpleado(@Valid @RequestBody EmpleadoRequest request) {
         Empleado creado = empleadoService.createEmpleado(request);
         System.out.println("Empleado creado: " + creado);
         return ResponseEntity.ok(creado);
@@ -35,19 +37,19 @@ public class EmpleadoController {
     }
 
     @DeleteMapping("admins/empleados/{id}")
-    public void eliminar(@PathVariable Long id) {
+    public void eliminar(@PathVariable @Positive(message = "El id debe ser positivo") Long id) {
         empleadoService.eliminar(id);
         System.out.println("Empleado eliminado");
     }
 
     @PutMapping("admins/empleados/{id}")
-    public ResponseEntity<Empleado> updateEmpleado(@PathVariable Long id, @RequestBody EmpleadoRequest request) {
+    public ResponseEntity<Empleado> updateEmpleado(@PathVariable @Positive(message = "El id debe ser positivo") Long id, @Valid @RequestBody EmpleadoRequest request) {
         Empleado actualizado = empleadoService.updateEmpleado(id, request);
         return ResponseEntity.ok(actualizado);
     }
 
     @GetMapping("empleados/{id}")
-    public ResponseEntity<Empleado> getEmpleadoById(@PathVariable Long id) {
+    public ResponseEntity<Empleado> getEmpleadoById(@PathVariable @Positive(message = "El id debe ser positivo") Long id) {
         Empleado empleado = empleadoService.getEmpleadoById(id);
         return ResponseEntity.ok(empleado);
     }
